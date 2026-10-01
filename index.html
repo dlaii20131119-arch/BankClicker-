@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank Clicker</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f2f6fb;
+    color:#1a202c;
+    padding-bottom:80px;
+}
+
+.header{
+    background:linear-gradient(135deg,#1261d6,#2784ff);
+    color:white;
+    padding:18px;
+    border-radius:0 0 25px 25px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    position:relative;
+}
+
+.header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h1{
+    margin:0;
+    font-size:24px;
+}
+
+.secret-dev-button{
+    position:absolute;
+    top:0;
+    right:0;
+    width:55px;
+    height:55px;
+    background:transparent;
+    border:0;
+    opacity:0;
+    cursor:pointer;
+    z-index:20;
+}
+
+.balance{
+    margin-top:15px;
+    font-size:34px;
+    font-weight:bold;
+}
+
+.sub{
+    opacity:.85;
+    margin-top:5px;
+}
+
+.container{
+    max-width:480px;
+    margin:auto;
+    padding:15px;
+}
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-top:0;
+}
+
+.click-btn{
+    width:100%;
+    border:0;
+    border-radius:20px;
+    background:linear-gradient(135deg,#1677ff,#0757ca);
+    color:white;
+    padding:25px;
+    font-size:24px;
+    font-weight:bold;
+    box-shadow:0 7px 0 #06439b;
+    transition:.1s;
+}
+
+.click-btn:active{
+    transform:translateY(6px);
+    box-shadow:0 1px 0 #06439b;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid #edf2f7;
+}
+
+.stat:last-child{
+    border-bottom:0;
+}
+
+.upgrade{
+    background:white;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.07);
+}
+
+.upgrade-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.upgrade h3{
+    margin:0 0 5px;
+}
+
+.upgrade p{
+    margin:5px 0;
+    color:#718096;
+}
+
+.buy{
+    border:0;
+    background:#1677ff;
+    color:white;
+    border-radius:12px;
+    padding:10px 14px;
+    font-weight:bold;
+}
+
+.buy:disabled{
+    background:#cbd5e0;
+}
+
+.btc-price{
+    font-size:30px;
+    font-weight:bold;
+    margin:15px 0;
+}
+
+.btc-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.btc-buttons button{
+    flex:1;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    color:white;
+    font-weight:bold;
+}
+
+.buy-btc{
+    background:#16a34a;
+}
+
+.sell-btc{
+    background:#dc2626;
+}
+
+.shop-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    padding:15px;
+    background:white;
+    border-radius:16px;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.achievement{
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:15px;
+    background:#edf2f7;
+}
+
+.achievement.unlocked{
+    background:#dcfce7;
+    border:1px solid #86efac;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    max-width:480px;
+    margin:auto;
+    min-height:70px;
+    background:white;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    box-shadow:0 -5px 20px rgba(0,0,0,.1);
+    z-index:100;
+    overflow-x:auto;
+}
+
+.tab{
+    border:0;
+    background:none;
+    font-size:10px;
+    color:#718096;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    min-width:58px;
+}
+
+.tab span{
+    font-size:22px;
+}
+
+.dev-panel{
+    display:none;
+    background:#111827;
+    color:white;
+    padding:18px;
+    border-radius:18px;
+    margin-top:15px;
+}
+
+.dev-panel.active{
+    display:block;
+}
+
+.dev-panel input{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:0;
+    border-radius:10px;
+}
+
+.devAction{
+    width:100%;
+    padding:12px;
+    border:0;
+    border-radius:10px;
+    margin:5px 0;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+}
+
+.devExit{
+    background:#dc2626;
+}
+
+.reset{
+    background:#dc2626;
+}
+
+.login-btn{
+    width:100%;
+    padding:12px;
+    border:0;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-weight:bold;
+}
+
+.reset-info{
+    background:#fff7ed;
+    color:#9a3412;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="header-top">
+        <h1>🏦 Bank Clicker</h1>
+    </div>
+
+    <!-- СЕКРЕТНАЯ КНОПКА РАЗРАБОТЧИКА -->
+    <button
+        class="secret-dev-button"
+        onclick="openDev()"
+        aria-label="Developer menu">
+    </button>
+
+    <div class="balance" id="money">$0</div>
+
+    <div class="sub">
+        ⚡ Доход: <span id="income">$0</span>/сек
+    </div>
+
+    <div id="devPanel" class="dev-panel">
+
+        <div id="devLogin">
+
+            <h2>🔐 Разработчик</h2>
+
+            <input
+                type="password"
+                id="devCode"
+                placeholder="Введите код">
+
+            <button
+                class="login-btn"
+                onclick="checkDev()">
+                Войти
+            </button>
+
+        </div>
+
+        <div id="devTools" style="display:none">
+
+            <h2>🛠 Панель разработчика</h2>
+
+            <input
+                type="number"
+                id="addMoney"
+                placeholder="Сумма долларов">
+
+            <button
+                class="devAction"
+                onclick="devMoney()">
+                💵 Добавить деньги
+            </button>
+
+            <input
+                type="number"
+                id="addBTC"
+                placeholder="Количество Bitcoin">
+
+            <button
+                class="devAction"
+                onclick="devBTC()">
+                ₿ Добавить Bitcoin
+            </button>
+
+            <input
+                type="number"
+                id="addUpgrades"
+                placeholder="Количество улучшений">
+
+            <button
+                class="devAction"
+                onclick="devUpgrades()">
+                ⚡ Добавить улучшения
+            </button>
+
+            <button
+                class="devAction"
+                onclick="maxStats()">
+                🚀 Максимальные характеристики
+            </button>
+
+            <button
+                class="devAction devExit"
+                onclick="logoutDeveloper()">
+                🚪 Выйти из режима разработчика
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <!-- ГЛАВНАЯ -->
+    <div id="home" class="section active">
+
+        <div class="card">
+
+            <h2>🏦 Твой банк</h2>
+
+            <div class="stat">
+                <span>💵 Баланс</span>
+                <b id="homeMoney">$0</b>
+            </div>
+
+            <div class="stat">
+                <span>⚡ Доход/сек</span>
+                <b id="homeIncome">$0</b>
+            </div>
+
+            <div class="stat">
+                <span>🖱 Кликов</span>
+                <b id="clicks">0</b>
+            </div>
+
+            <div class="stat">
+                <span>⭐ Репутация</span>
+                <b id="rep">0</b>
+            </div>
+
+            <div class="stat">
+                <span>🏦 Уровень банка</span>
+                <b id="bankLevel">1</b>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <button
+                class="click-btn"
+                onclick="clickBank()">
+                💵 ПОЛУЧИТЬ ДЕНЬГИ
+            </button>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📊 Статистика</h2>
+
+            <div class="stat">
+                <span>Всего заработано</span>
+                <b id="total">$0</b>
+            </div>
+
+            <div class="stat">
+                <span>₿ Bitcoin</span>
+                <b id="btc">0</b>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- УЛУЧШЕНИЯ -->
+    <div id="upgrades" class="section">
+
+        <div class="card">
+
+            <h2>⚡ Улучшения</h2>
+
+            <p style="color:#718096">
+                Развивай свой банк и увеличивай доход.
+            </p>
+
+        </div>
+
+        <div id="upgradeList"></div>
+
+    </div>
+
+
+    <!-- BITCOIN -->
+    <div id="bitcoin" class="section">
+
+        <div class="card">
+
+            <h2>₿ Bitcoin</h2>
+
+            <div
+                class="btc-price"
+                id="btcPrice">
+                $65,000
+            </div>
+
+            <p>
+                У тебя:
+                <b id="btcAmount">0</b> BTC
+            </p>
+
+            <div class="btc-buttons">
+
+                <button
+                    class="buy-btc"
+                    onclick="buyBTC()">
+                    Купить BTC
+                </button>
+
+                <button
+                    class="sell-btc"
+                    onclick="sellBTC()">
+                    Продать BTC
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📈 Рынок</h2>
+
+            <p>
+                Цена Bitcoin меняется каждые 5 секунд.
+            </p>
+
+            <p style="color:#718096">
+                Изменение может составлять примерно ±5%.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- МАГАЗИН -->
+    <div id="shop" class="section">
+
+        <div class="card">
+
+            <h2>🛒 Магазин</h2>
+
+            <p style="color:#718096">
+                Покупай предметы и увеличивай свой множитель.
+            </p>
+
+        </div>
+
+        <div id="shopList"></div>
+
+    </div>
+
+
+    <!-- ДОСТИЖЕНИЯ -->
+    <div id="achievements" class="section">
+
+        <div class="card">
+
+            <h2>🏆 Достижения</h2>
+
+            <p style="color:#718096">
+                Выполняй задания и получай достижения.
+            </p>
+
+        </div>
+
+        <div id="achievementList"></div>
+
+    </div>
+
+
+    <!-- НАСТРОЙКИ -->
+    <div id="settings" class="section">
+
+        <div class="card">
+
+            <h2>⚙️ Настройки</h2>
+
+            <p style="color:#718096">
+                Управление игрой и сохранением прогресса.
+            </p>
+
+            <div class="reset-info">
+                ⚠️ Сброс удалит весь текущий прогресс игры.
+            </div>
+
+            <button
+                class="devAction reset"
+                onclick="resetGame()">
+                🗑 Сбросить весь прогресс
+            </button>
+
+        </div>
+
+        <div class="card">
+
+            <h2>ℹ️ О игре</h2>
+
+            <p>🏦 Bank Clicker</p>
+
+            <p style="color:#718096">
+                Кликер про развитие собственного виртуального банка.
+            </p>
+
+            <p>
+                💾 Сохранение: автоматически
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="bottom-nav">
+
+    <button class="tab" onclick="show('home')">
+        <span>🏠</span>
+        Главная
+    </button>
+
+    <button class="tab" onclick="show('upgrades')">
+        <span>⚡</span>
+        Улучшения
+    </button>
+
+    <button class="tab" onclick="show('bitcoin')">
+        <span>₿</span>
+        Bitcoin
+    </button>
+
+    <button class="tab" onclick="show('shop')">
+        <span>🛒</span>
+        Магазин
+    </button>
+
+    <button class="tab" onclick="show('achievements')">
+        <span>🏆</span>
+        Достижения
+    </button>
+
+    <button class="tab" onclick="show('settings')">
+        <span>⚙️</span>
+        Настройки
+    </button>
+
+</div>
+
+
+<script>
+
+let game =
+JSON.parse(
+    localStorage.getItem("bankClicker")
+) || {
+
+    money:0,
+    btc:0,
+    clicks:0,
+    total:0,
+    rep:0,
+    bankLevel:1,
+    clickPower:1,
+    income:0,
+    upgrades:{},
+    shop:{}
+
+};
+
+let btcPrice = 65000;
+
+
+const upgrades = [
+
+    {
+        id:"click1",
+        name:"💪 Сильная кнопка",
+        price:10,
+        power:1,
+        type:"click"
+    },
+
+    {
+        id:"click2",
+        name:"💳 Золотая карта",
+        price:100,
+        power:5,
+        type:"click"
+    },
+
+    {
+        id:"click3",
+        name:"💎 Платиновая карта",
+        price:500,
+        power:25,
+        type:"click"
+    },
+
+    {
+        id:"click4",
+        name:"👑 VIP карта",
+        price:2500,
+        power:100,
+        type:"click"
+    },
+
+    {
+        id:"income1",
+        name:"🏧 Банкомат",
+        price:250,
+        power:2,
+        type:"income"
+    },
+
+    {
+        id:"income2",
+        name:"🏢 Филиал",
+        price:1000,
+        power:10,
+        type:"income"
+    },
+
+    {
+        id:"income3",
+        name:"🏙 Финансовый центр",
+        price:5000,
+        power:50,
+        type:"income"
+    },
+
+    {
+        id:"income4",
+        name:"🌎 Международный банк",
+        price:25000,
+        power:250,
+        type:"income"
+    },
+
+    {
+        id:"income5",
+        name:"📈 Инвестиционный фонд",
+        price:100000,
+        power:1000,
+        type:"income"
+    },
+
+    {
+        id:"crypto",
+        name:"₿ Криптоферма",
+        price:500000,
+        power:2500,
+        type:"income"
+    },
+
+    {
+        id:"ai",
+        name:"🤖 ИИ-банкир",
+        price:2000000,
+        power:10000,
+        type:"income"
+    },
+
+    {
+        id:"quantum",
+        name:"⚛️ Квантовый сервер",
+        price:10000000,
+        power:50000,
+        type:"income"
+    },
+
+    {
+        id:"empire",
+        name:"🌐 Банковская империя",
+        price:50000000,
+        power:250000,
+        type:"income"
+    }
+
+];
+
+
+const shopItems = [
+
+    {
+        id:"safe",
+        name:"🔐 Сейф",
+        price:500,
+        bonus:0.10
+    },
+
+    {
+        id:"office",
+        name:"🏢 Офис",
+        price:5000,
+        bonus:0.25
+    },
+
+    {
+        id:"car",
+        name:"🚗 Машина",
+        price:25000,
+        bonus:0.50
+    },
+
+    {
+        id:"jet",
+        name:"✈️ Частный самолёт",
+        price:250000,
+        bonus:1
+    },
+
+    {
+        id:"island",
+        name:"🏝 Личный остров",
+        price:5000000,
+        bonus:3
+    }
+
+];
+
+
+const achievements = [
+
+    {
+        id:"first",
+        name:"💵 Первый доллар",
+        check:()=>game.total>=1
+    },
+
+    {
+        id:"thousand",
+        name:"💰 Первая тысяча",
+        check:()=>game.total>=1000
+    },
+
+    {
+        id:"millionaire",
+        name:"🤑 Миллионер",
+        check:()=>game.total>=1000000
+    },
+
+    {
+        id:"banker10",
+        name:"🏦 Опытный банкир",
+        check:()=>game.bankLevel>=10
+    },
+
+    {
+        id:"crypto",
+        name:"₿ Криптоинвестор",
+        check:()=>game.btc>=0.01
+    },
+
+    {
+        id:"click100",
+        name:"🖱 100 кликов",
+        check:()=>game.clicks>=100
+    },
+
+    {
+        id:"click1000",
+        name:"🔥 1000 кликов",
+        check:()=>game.clicks>=1000
+    },
+
+    {
+        id:"empire",
+        name:"🌐 Банковская империя",
+        check:()=>game.bankLevel>=100
+    }
+
+];
+
+
+function save(){
+
+    localStorage.setItem(
+        "bankClicker",
+        JSON.stringify(game)
+    );
+
+}
+
+
+function formatMoney(value){
+
+    return "$" +
+        Math.floor(value)
+        .toLocaleString("en-US");
+
+}
+
+
+function getMultiplier(){
+
+    let multiplier = 1;
+
+    for(let item of shopItems){
+
+        if(game.shop[item.id]){
+            multiplier += item.bonus;
+        }
+
+    }
+
+    return multiplier;
+
+}
+
+
+function clickBank(){
+
+    let multiplier =
+        getMultiplier();
+
+    let earned =
+        game.clickPower * multiplier;
+
+    game.money += earned;
+    game.total += earned;
+    game.clicks++;
+    game.rep += 0.1;
+
+    update();
+    save();
+
+}
+
+
+function buyUpgrade(id){
+
+    let item =
+        upgrades.find(
+            x => x.id === id
+        );
+
+    if(!item) return;
+
+    if(game.money < item.price)
+        return;
+
+    game.money -= item.price;
+
+    if(!game.upgrades[id]){
+        game.upgrades[id] = 0;
+    }
+
+    game.upgrades[id]++;
+
+    if(item.type === "click"){
+        game.clickPower += item.power;
+    }
+
+    if(item.type === "income"){
+        game.income += item.power;
+    }
+
+    game.bankLevel++;
+
+    save();
+    update();
+
+}
+
+
+function buyShop(id){
+
+    let item =
+        shopItems.find(
+            x => x.id === id
+        );
+
+    if(!item) return;
+
+    if(game.shop[id])
+        return;
+
+    if(game.money < item.price)
+        return;
+
+    game.money -= item.price;
+    game.shop[id] = true;
+
+    save();
+    update();
+
+}
+
+
+function buyBTC(){
+
+    if(game.money < btcPrice)
+        return;
+
+    game.money -= btcPrice;
+    game.btc += 1;
+
+    save();
+    update();
+
+}
+
+
+function sellBTC(){
+
+    if(game.btc < 1)
+        return;
+
+    game.btc -= 1;
+    game.money += btcPrice;
+    game.total += btcPrice;
+
+    save();
+    update();
+
+}
+
+
+function updateBTC(){
+
+    let change =
+        (Math.random() * 0.10) - 0.05;
+
+    btcPrice *= 1 + change;
+
+    if(btcPrice < 1000)
+        btcPrice = 1000;
+
+    document.getElementById("btcPrice")
+        .textContent =
+        formatMoney(btcPrice);
+
+}
+
+
+function update(){
+
+    document.getElementById("money")
+        .textContent =
+        formatMoney(game.money);
+
+    document.getElementById("homeMoney")
+        .textContent =
+        formatMoney(game.money);
+
+    document.getElementById("income")
+        .textContent =
+        formatMoney(game.income);
+
+    document.getElementById("homeIncome")
+        .textContent =
+        formatMoney(game.income);
+
+    document.getElementById("clicks")
+        .textContent =
+        Math.floor(game.clicks);
+
+    document.getElementById("rep")
+        .textContent =
+        Math.floor(game.rep);
+
+    document.getElementById("bankLevel")
+        .textContent =
+        Math.floor(game.bankLevel);
+
+    document.getElementById("total")
+        .textContent =
+        formatMoney(game.total);
+
+    document.getElementById("btc")
+        .textContent =
+        game.btc.toFixed(4);
+
+    document.getElementById("btcAmount")
+        .textContent =
+        game.btc.toFixed(4);
+
+    renderUpgrades();
+    renderShop();
+    renderAchievements();
+
+}
+
+
+function renderUpgrades(){
+
+    let html = "";
+
+    for(let item of upgrades){
+
+        let count =
+            game.upgrades[item.id] || 0;
+
+        html += `
+        <div class="upgrade">
+
+            <div class="upgrade-top">
+
+                <div>
+
+                    <h3>${item.name}</h3>
+
+                    <p>
+                        ${
+                            item.type === "click"
+                            ? "🖱 +" +
+                              item.power +
+                              " к силе клика"
+                            : "⚡ +" +
+                              item.power +
+                              "/сек"
+                        }
+                    </p>
+
+                    <p>
+                        Куплено: ${count}
+                    </p>
+
+                </div>
+
+                <button
+                    class="buy"
+                    onclick="buyUpgrade('${item.id}')"
+                    ${
+                        game.money < item.price
+                        ? "disabled"
+                        : ""
+                    }>
+                    ${formatMoney(item.price)}
+                </button>
+
+            </div>
+
+        </div>
+        `;
+
+    }
+
+    document.getElementById(
+        "upgradeList"
+    ).innerHTML = html;
+
+}
+
+
+function renderShop(){
+
+    let html = "";
+
+    for(let item of shopItems){
+
+        let bought =
+            game.shop[item.id];
+
+        html += `
+        <div class="shop-item">
+
+            <div>
+
+                <b>${item.name}</b>
+
+                <div style="color:#718096">
+                    +${Math.round(
+                        item.bonus * 100
+                    )}% к доходу
+                </div>
+
+            </div>
+
+            <button
+                class="buy"
+                onclick="buyShop('${item.id}')"
+                ${
+                    bought ||
+                    game.money < item.price
+                    ? "disabled"
+                    : ""
+                }>
+                ${
+                    bought
+                    ? "Куплено"
+                    : formatMoney(item.price)
+                }
+            </button>
+
+        </div>
+        `;
+
+    }
+
+    document.getElementById(
+        "shopList"
+    ).innerHTML = html;
+
+}
+
+
+function renderAchievements(){
+
+    let html = "";
+
+    for(let item of achievements){
+
+        let unlocked =
+            item.check();
+
+        html += `
+        <div class="achievement ${
+            unlocked ? "unlocked" : ""
+        }">
+
+            <b>
+                ${
+                    unlocked
+                    ? "✅"
+                    : "🔒"
+                }
+                ${item.name}
+            </b>
+
+            <div
+                style="color:#718096;margin-top:5px">
+                ${
+                    unlocked
+                    ? "Достижение получено!"
+                    : "Ещё не получено"
+                }
+            </div>
+
+        </div>
+        `;
+
+    }
+
+    document.getElementById(
+        "achievementList"
+    ).innerHTML = html;
+
+}
+
+
+function show(id){
+
+    document.querySelectorAll(
+        ".section"
+    ).forEach(
+        section =>
+            section.classList.remove("active")
+    );
+
+    let section =
+        document.getElementById(id);
+
+    if(section)
+        section.classList.add("active");
+
+    window.scrollTo(0,0);
+
+}
+
+
+function openDev(){
+
+    document.getElementById(
+        "devPanel"
+    ).classList.toggle("active");
+
+}
+
+
+function checkDev(){
+
+    let code =
+        document.getElementById(
+            "devCode"
+        ).value;
+
+    if(code === "20131119"){
+
+        document.getElementById(
+            "devLogin"
+        ).style.display = "none";
+
+        document.getElementById(
+            "devTools"
+        ).style.display = "block";
+
+    }else{
+
+        alert("❌ Неверный код!");
+
+    }
+
+}
+
+
+function logoutDeveloper(){
+
+    document.getElementById(
+        "devTools"
+    ).style.display = "none";
+
+    document.getElementById(
+        "devLogin"
+    ).style.display = "block";
+
+    document.getElementById(
+        "devCode"
+    ).value = "";
+
+    document.getElementById(
+        "addMoney"
+    ).value = "";
+
+    document.getElementById(
+        "addBTC"
+    ).value = "";
+
+    document.getElementById(
+        "addUpgrades"
+    ).value = "";
+
+    document.getElementById(
+        "devPanel"
+    ).classList.remove("active");
+
+}
+
+
+function devMoney(){
+
+    let amount =
+        Number(
+            document.getElementById(
+                "addMoney"
+            ).value
+        );
+
+    if(amount <= 0)
+        return;
+
+    game.money += amount;
+    game.total += amount;
+
+    save();
+    update();
+
+}
+
+
+function devBTC(){
+
+    let amount =
+        Number(
+            document.getElementById(
+                "addBTC"
+            ).value
+        );
+
+    if(amount <= 0)
+        return;
+
+    game.btc += amount;
+
+    save();
+    update();
+
+}
+
+
+function devUpgrades(){
+
+    let amount =
+        Number(
+            document.getElementById(
+                "addUpgrades"
+            ).value
+        );
+
+    if(amount <= 0)
+        return;
+
+    game.clickPower += amount;
+    game.income += amount * 10;
+
+    save();
+    update();
+
+}
+
+
+/* ==========================================
+   МАКСИМАЛЬНЫЕ ХАРАКТЕРИСТИКИ
+   ========================================== */
+
+function maxStats(){
+
+    /*
+       Огромный запас денег,
+       чтобы все улучшения были доступны.
+    */
+    game.money = 999999999999999;
+
+    /*
+       Максимальная сила клика
+    */
+    game.clickPower = 1000000;
+
+    /*
+       Максимальный пассивный доход
+    */
+    game.income = 10000000;
+
+    /*
+       Максимальный уровень банка
+    */
+    game.bankLevel = 10000;
+
+    /*
+       Максимальная репутация
+    */
+    game.rep = 1000000;
+
+    /*
+       Большое количество Bitcoin
+    */
+    game.btc = 1000;
+
+    /*
+       Максимальное количество кликов
+    */
+    game.clicks = 1000000;
+
+    /*
+       Общая заработанная сумма
+    */
+    game.total = 999999999999999;
+
+    /*
+       ==================================
+       МАКСИМАЛЬНО ПРОКАЧИВАЕМ ВСЕ
+       УЛУЧШЕНИЯ
+       ==================================
+    */
+
+    for(let item of upgrades){
+
+        /*
+           Каждое улучшение получает
+           максимальный уровень.
+        */
+        game.upgrades[item.id] = 1000;
+
+    }
+
+    /*
+       ==================================
+       ПОКУПАЕМ ВЕСЬ МАГАЗИН
+       ==================================
+    */
+
+    for(let item of shopItems){
+
+        game.shop[item.id] = true;
+
+    }
+
+    /*
+       Сохраняем всё
+    */
+    save();
+
+    /*
+       Обновляем интерфейс
+    */
+    update();
+
+    /*
+       Сообщение
+    */
+    alert(
+        "🚀 ВСЁ МАКСИМАЛЬНО ПРОКАЧАНО!\n\n" +
+        "⚡ Все улучшения: MAX\n" +
+        "🛒 Весь магазин: куплен\n" +
+        "💵 Деньги: MAX\n" +
+        "₿ Bitcoin: MAX\n" +
+        "🖱 Кликов: MAX\n" +
+        "⭐ Репутация: MAX\n" +
+        "🏦 Уровень банка: MAX"
+    );
+
+}
+
+
+/* ==========================================
+   ПОЛНЫЙ СБРОС ИГРЫ
+   ========================================== */
+
+function resetGame(){
+
+    const confirmed =
+        confirm(
+            "⚠️ СБРОСИТЬ ВСЮ ИГРУ?\n\n" +
+            "Будет удалено абсолютно всё:\n\n" +
+            "💵 Деньги\n" +
+            "₿ Bitcoin\n" +
+            "⚡ Улучшения\n" +
+            "🛒 Покупки\n" +
+            "🏆 Достижения\n" +
+            "📊 Статистика\n\n" +
+            "Это действие нельзя отменить!"
+        );
+
+    if(!confirmed)
+        return;
+
+    try{
+
+        localStorage.removeItem(
+            "bankClicker"
+        );
+
+        localStorage.clear();
+
+    }catch(error){
+
+        console.log(
+            "Ошибка очистки:",
+            error
+        );
+
+    }
+
+    game = {
+
+        money:0,
+        btc:0,
+        clicks:0,
+        total:0,
+        rep:0,
+        bankLevel:1,
+        clickPower:1,
+        income:0,
+        upgrades:{},
+        shop:{}
+
+    };
+
+    localStorage.setItem(
+        "bankClicker",
+        JSON.stringify(game)
+    );
+
+    location.reload();
+
+}
+
+
+/* ==========================================
+   ПАССИВНЫЙ ДОХОД
+   ========================================== */
+
+setInterval(()=>{
+
+    if(game.income > 0){
+
+        let multiplier =
+            getMultiplier();
+
+        let earned =
+            game.income *
+            multiplier;
+
+        game.money += earned;
+
+        game.total += earned;
+
+        save();
+
+        update();
+
+    }
+
+},1000);
+
+
+/* ==========================================
+   ИЗМЕНЕНИЕ ЦЕНЫ BITCOIN
+   ========================================== */
+
+setInterval(()=>{
+
+    updateBTC();
+
+},5000);
+
+
+update();
+
+</script>
+
+</body>
+</html>
